@@ -1,0 +1,5 @@
+[workspace]
+
+members = ["ownership", "rectangle", "options", "communicator",
+    "privacy", "containers", "traits", "largest", "lifetime", "awesome",
+    "minigrep"]
