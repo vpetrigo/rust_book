@@ -28,3 +28,43 @@ impl<T> Cacher<T>
         }
     }
 }
+
+#[cfg(test)]
+mod tests_cacher {
+    use super::*;
+
+    #[test]
+    fn test_value_get() {
+        let mut cacher = Cacher::new(|x| x);
+
+        assert_eq!(cacher.value(1), 1);
+    }
+
+    #[test]
+    fn test_value_multiple_get() {
+        let mut cacher = Cacher::new(|x| x);
+
+        assert_eq!(cacher.value(1), 1);
+        assert_eq!(cacher.value(2), 2);
+    }
+
+    #[test]
+    fn test_single_call() {
+        use std::cell::Cell;
+
+        let init = Cell::new(false);
+
+        let mut cacher = Cacher::new(|x| {
+            if !init.get() {
+                init.set(true);
+                x
+            }
+            else {
+                panic!("Double call");
+            }
+        });
+
+        assert_eq!(cacher.value(1), 1);
+        assert_eq!(cacher.value(1), 1);
+    }
+}
