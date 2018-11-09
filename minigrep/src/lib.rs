@@ -15,6 +15,7 @@ impl Query {
             return Err("Not enough arguments");
         }
 
+        // skip the program name argument
         let mut parameters = args.skip(1);
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
         let query = parameters.next().ok_or("Unable to get query parameter")?;
@@ -40,27 +41,16 @@ pub fn run(query: Query) -> Result<(), Box<dyn Error>> {
 }
 
 fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    let mut result = Vec::new();
-
-    for line in content.lines() {
-        if line.contains(query) {
-            result.push(line);
-        }
-    }
-
-    result
+    content.lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    let mut result = Vec::new();
-
-    for line in content.lines() {
-        if line.to_lowercase().contains(query.to_lowercase().as_str()) {
-            result.push(line);
-        }
-    }
-
-    result
+    content.lines()
+        .filter(|line|
+            line.to_lowercase().as_str().contains(query.to_lowercase().as_str()))
+        .collect()
 }
 
 #[cfg(test)]
