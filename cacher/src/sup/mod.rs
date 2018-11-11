@@ -1,30 +1,32 @@
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
+use std::hash::Hash;
 
-pub struct Cacher<T>
-    where T: Fn(u32) -> u32
+pub struct Cacher<T, K, V>
+    where T: Fn(&K) -> V,
+          K: Eq + Hash + Clone,
+          V: Clone
 {
     calculation: T,
-    values: HashMap<u32, u32>,
+    values: HashMap<K, V>,
 }
 
-impl<T> Cacher<T>
-    where T: Fn(u32) -> u32
+impl<T, K, V> Cacher<T, K, V>
+    where T: Fn(&K) -> V,
+          K: Eq + Hash + Clone,
+          V: Clone
 {
-    pub fn new(calculation: T) -> Cacher<T> {
+    pub fn new(calculation: T) -> Cacher<T, K, V> {
         Cacher {
             calculation,
             values: HashMap::new(),
         }
     }
 
-    pub fn value(&mut self, arg: u32) -> u32 {
-        match self.values.get(&arg) {
-            Some(&v) => v,
-            None => {
-                let v = (self.calculation)(arg);
-                self.values.insert(arg, v);
-                v
-            }
+    pub fn value(&mut self, arg: K) -> &V {
+        match self.values.entry(arg.clone()) {
+            Entry::Occupied(entry) => entry.into_mut(),
+            Entry::Vacant(holder) => holder.insert((self.calculation)(arg)),
         }
     }
 }
@@ -37,15 +39,15 @@ mod tests_cacher {
     fn test_value_get() {
         let mut cacher = Cacher::new(|x| x);
 
-        assert_eq!(cacher.value(1), 1);
+        assert_eq!(*cacher.value(1), 1);
     }
 
     #[test]
     fn test_value_multiple_get() {
         let mut cacher = Cacher::new(|x| x);
 
-        assert_eq!(cacher.value(1), 1);
-        assert_eq!(cacher.value(2), 2);
+        assert_eq!(*cacher.value(1), 1);
+        assert_eq!(*cacher.value(2), 2);
     }
 
     #[test]
@@ -54,7 +56,7 @@ mod tests_cacher {
 
         let init = Cell::new(false);
 
-        let mut cacher = Cacher::new(|x| {
+        let mut cacher = Cacher::new(|x: u32| {
             if !init.get() {
                 init.set(true);
                 x
@@ -64,7 +66,14 @@ mod tests_cacher {
             }
         });
 
-        assert_eq!(cacher.value(1), 1);
-        assert_eq!(cacher.value(1), 1);
+        assert_eq!(*cacher.value(1), 1);
+        assert_eq!(*cacher.value(1), 1);
+    }
+
+    #[test]
+    fn test_string_value_get() {
+        let mut cacher = Cacher::new(|x: &str| x.len());
+
+        assert_eq!(*cacher.value("123"), "123".len());
     }
 }
