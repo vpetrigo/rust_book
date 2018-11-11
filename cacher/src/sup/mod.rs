@@ -3,7 +3,7 @@ use std::collections::hash_map::Entry;
 use std::hash::Hash;
 
 pub struct Cacher<T, K, V>
-    where T: Fn(&K) -> V,
+    where T: Fn(K) -> V,
           K: Eq + Hash + Clone,
           V: Clone
 {
@@ -12,7 +12,7 @@ pub struct Cacher<T, K, V>
 }
 
 impl<T, K, V> Cacher<T, K, V>
-    where T: Fn(&K) -> V,
+    where T: Fn(K) -> V,
           K: Eq + Hash + Clone,
           V: Clone
 {
