@@ -56,7 +56,7 @@ mod tests_cacher {
 
         let init = Cell::new(false);
 
-        let mut cacher = Cacher::new(|x: u32| {
+        let mut cacher = Cacher::new(|x| {
             if !init.get() {
                 init.set(true);
                 x
