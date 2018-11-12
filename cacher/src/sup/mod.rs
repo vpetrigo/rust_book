@@ -4,8 +4,7 @@ use std::hash::Hash;
 
 pub struct Cacher<T, K, V>
     where T: Fn(K) -> V,
-          K: Eq + Hash + Clone,
-          V: Clone
+          K: Eq + Hash,
 {
     calculation: T,
     values: HashMap<K, V>,
@@ -13,8 +12,7 @@ pub struct Cacher<T, K, V>
 
 impl<T, K, V> Cacher<T, K, V>
     where T: Fn(K) -> V,
-          K: Eq + Hash + Clone,
-          V: Clone
+          K: Eq + Hash + Copy
 {
     pub fn new(calculation: T) -> Cacher<T, K, V> {
         Cacher {
