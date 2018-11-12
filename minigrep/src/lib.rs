@@ -3,31 +3,40 @@ use std::fs;
 use std::env;
 
 #[derive(Debug)]
-pub struct Query<'a> {
-    pattern: &'a String,
-    file: &'a String,
+pub struct Query {
+    pattern: String,
+    file: String,
     case_sensitive: bool,
 }
 
-impl<'a> Query<'a> {
-    pub fn new(args: &[String]) -> Result<Query, &'static str> {
+impl Query {
+    pub fn new(args: std::env::Args) -> Result<Query, &'static str> {
         if args.len() < 3 {
             return Err("Not enough arguments");
         }
 
+        let mut parameters = args.skip(1);
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+        let query = match parameters.next() {
+            Some(arg) => arg,
+            None => return Err("Unable to get query parameter"),
+        };
 
-        Ok(Query { pattern: &args[1], file: &args[2], case_sensitive })
+        let filename = match parameters.next() {
+            Some(arg) => arg,
+            None => return Err("Unable to get filename"),
+        };
+
+        Ok(Query { pattern: query, file: filename, case_sensitive })
     }
 }
 
 pub fn run(query: Query) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(query.file)?;
     let result = if query.case_sensitive {
-        search(query.pattern, &content)
-    }
-    else {
-        search_case_insensitive(query.pattern, &content)
+        search(&query.pattern, &content)
+    } else {
+        search_case_insensitive(&query.pattern, &content)
     };
 
     for line in result {

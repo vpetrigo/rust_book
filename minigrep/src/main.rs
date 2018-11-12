@@ -15,8 +15,7 @@ fn print_help() {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let query = minigrep::Query::new(&args).unwrap_or_else(|err| {
+    let query = minigrep::Query::new(env::args()).unwrap_or_else(|err| {
         print_help();
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(AppStatus::QueryErr as i32);
