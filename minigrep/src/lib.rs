@@ -17,15 +17,8 @@ impl Query {
 
         let mut parameters = args.skip(1);
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-        let query = match parameters.next() {
-            Some(arg) => arg,
-            None => return Err("Unable to get query parameter"),
-        };
-
-        let filename = match parameters.next() {
-            Some(arg) => arg,
-            None => return Err("Unable to get filename"),
-        };
+        let query = parameters.next().ok_or("Unable to get query parameter")?;
+        let filename = parameters.next().ok_or("Unable to get filename")?;
 
         Ok(Query { pattern: query, file: filename, case_sensitive })
     }
