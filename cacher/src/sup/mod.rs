@@ -21,6 +21,23 @@ impl<T, K, V> Cacher<T, K, V>
         }
     }
 
+    /// Try to get an already calculated value for the given key
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use std::thread;
+    /// use std::time::Duration;
+    /// use cacher::sup;
+    ///
+    /// let mut cacher = sup::Cacher::new(|x| {
+    ///     thread::sleep(Duration::from_secs(2));
+    ///     x
+    /// });
+    ///
+    /// assert_eq!(*cacher.value(5), 5);
+    /// assert_eq!(*cacher.value(5), 5);
+    /// ```
     pub fn value(&mut self, arg: K) -> &V {
         match self.values.entry(arg.clone()) {
             Entry::Occupied(entry) => entry.into_mut(),
