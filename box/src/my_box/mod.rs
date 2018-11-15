@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::ops::{ Deref, Drop };
 
 pub struct MyBox<T>(T);
 
@@ -13,5 +13,11 @@ impl<T> Deref for MyBox<T> {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl<T> Drop for MyBox<T> {
+    fn drop(&mut self) {
+        println!("Drop from MyBox");
     }
 }
