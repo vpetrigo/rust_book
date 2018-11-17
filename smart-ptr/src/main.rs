@@ -1,6 +1,5 @@
 use std::rc::{Rc, Weak};
-use std::cell::RefCell;
-use std::cell::Ref;
+use std::cell::{RefCell, Ref};
 
 #[derive(Debug)]
 struct Node {
