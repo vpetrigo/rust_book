@@ -4,49 +4,41 @@ use std::cell::RefCell;
 #[derive(Debug)]
 struct Node {
     value: i32,
-    parent: RefCell<Weak<Node>>,
-    children: RefCell<Vec<Rc<Node>>>,
+    adjacent: RefCell<Vec<Weak<Node>>>,
+}
+
+impl Node {
+    fn new(value: i32) -> Node {
+        Node {
+            value,
+            adjacent: RefCell::new(Vec::new()),
+        }
+    }
+}
+
+fn print_adjacent_nodes(node: &Node) {
+    print!("Adjacent to node {}:", node.value);
+
+    node.adjacent.borrow().iter().for_each(|n| {
+        if let Some(exists) = n.upgrade() {
+            print!(" node {}", exists.value);
+        }
+    });
+
+    println!("");
 }
 
 fn main() {
-    let leaf = Rc::new(Node {
-        value: 3,
-        parent: RefCell::new(Weak::new()),
-        children: RefCell::new(vec![]),
-    });
+    let node1 = Rc::new(Node::new(1));
+    let node2 = Rc::new(Node::new(2));
+    let node3 = Rc::new(Node::new(3));
 
-    println!(
-        "leaf strong = {}, weak = {}",
-        Rc::strong_count(&leaf),
-        Rc::weak_count(&leaf),
-    );
+    node1.adjacent.borrow_mut().push(Rc::downgrade(&node2));
+    node1.adjacent.borrow_mut().push(Rc::downgrade(&node3));
+    node2.adjacent.borrow_mut().push(Rc::downgrade(&node1));
+    node3.adjacent.borrow_mut().push(Rc::downgrade(&node1));
 
-    {
-        let branch = Rc::new(Node {
-            value: 5,
-            parent: RefCell::new(Weak::new()),
-            children: RefCell::new(vec![Rc::clone(&leaf)]),
-        });
-
-        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
-
-        println!(
-            "branch strong = {}, weak = {}",
-            Rc::strong_count(&branch),
-            Rc::weak_count(&branch),
-        );
-
-        println!(
-            "leaf strong = {}, weak = {}",
-            Rc::strong_count(&leaf),
-            Rc::weak_count(&leaf),
-        );
-    }
-
-    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
-    println!(
-        "leaf strong = {}, weak = {}",
-        Rc::strong_count(&leaf),
-        Rc::weak_count(&leaf),
-    );
+    print_adjacent_nodes(&node1);
+    print_adjacent_nodes(&node2);
+    print_adjacent_nodes(&node3);
 }
