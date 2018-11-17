@@ -1,15 +1,15 @@
 #[derive(Debug)]
-struct Rectangle {
+pub struct Rectangle {
     width: u32,
     height: u32,
 }
 
 impl Rectangle {
-    fn area(&self) -> u32 {
+    pub fn area(&self) -> u32 {
         self.width * self.height
     }
 
-    fn can_hold(&self, other: &Rectangle) -> bool {
+    pub fn can_hold(&self, other: &Rectangle) -> bool {
         (self.width >= other.width && self.height >= other.height) ||
             (self.width >= other.height && self.height >= other.width)
     }
