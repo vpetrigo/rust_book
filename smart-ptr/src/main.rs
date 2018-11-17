@@ -1,5 +1,6 @@
 use std::rc::{Rc, Weak};
 use std::cell::RefCell;
+use std::cell::Ref;
 
 #[derive(Debug)]
 struct Node {
@@ -14,18 +15,22 @@ impl Node {
             adjacent: RefCell::new(Vec::new()),
         }
     }
+
+    fn adjacent_ref(&self) -> Ref<Vec<Weak<Node>>> {
+        self.adjacent.borrow()
+    }
 }
 
 fn print_adjacent_nodes(node: &Node) {
     print!("Adjacent to node {}:", node.value);
 
-    node.adjacent.borrow().iter().for_each(|n| {
+    node.adjacent_ref().iter().for_each(|n| {
         if let Some(exists) = n.upgrade() {
             print!(" node {}", exists.value);
         }
     });
 
-    println!("");
+    print!("\n");
 }
 
 fn main() {
