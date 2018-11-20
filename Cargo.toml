@@ -2,4 +2,5 @@
 
 members = ["ownership", "rectangle", "options", "communicator",
     "privacy", "containers", "traits", "largest", "lifetime", "awesome",
-    "minigrep", "cacher", "box", "smart-ptr", "multithreading", "average-collection"]
+    "minigrep", "cacher", "box", "smart-ptr", "multithreading", "average-collection",
+    "dyn-traits"]
