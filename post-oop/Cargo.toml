@@ -1,5 +1,9 @@
 [package]
 
-name = ""
-version = "x.x.x"
-authors = ["Vladimir"]
+name = "post-oop"
+version = "0.0.1"
+authors = ["Vladimir Petrigo <taenaru@gmail.com>"]
+
+[dependencies]
+
+blog = { path = "../blog", version = "0.0.1"}
