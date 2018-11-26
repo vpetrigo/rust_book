@@ -1,0 +1,5 @@
+[package]
+
+name = "unsafe"
+version = "0.0.1"
+authors = ["Vladimir Petrigo <taenaru@gmail.com>"]
