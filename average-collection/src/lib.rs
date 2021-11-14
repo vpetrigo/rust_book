@@ -72,6 +72,7 @@ mod average_list_test {
         let cur_size = avg_list.len();
         avg_list.remove(cur_size - 1);
         assert_eq!(1.5, avg_list.get_average());
+
         let cur_size = avg_list.len();
         avg_list.remove(cur_size - 1);
         assert_eq!(1.0, avg_list.get_average());
